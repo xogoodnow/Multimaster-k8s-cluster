@@ -1,0 +1,21 @@
+---
+- name: Generate a new token
+  command: kubeadm token generate
+  delegate_to: groups['bamdad][0]
+  register: token_output
+
+
+- name: Get the join command for worker nodes
+  command:
+    cmd: kubeadm token create {{ token_output.stdout }} --print-join-command
+  register: worker_join_command_output
+
+
+
+- name: Save the worker join command to a variable
+  ansible.builtin.set_fact:
+    worker_join_command: "{{ worker_join_command_output.stdout }}"
+
+
+- name: Join the worker nodes to the Kubernetes cluster
+  shell: "{{ worker_join_command }}"

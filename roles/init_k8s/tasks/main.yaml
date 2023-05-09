@@ -1,0 +1,21 @@
+---
+- name: pull k8s images
+  command:
+    cmd: kubeadm config images pull --v=5
+  register: kubeadm_images
+  changed_when: "'Image pull complete' in kubeadm_images.stdout"
+
+
+
+- name: Initialize Kubernetes master
+  when: init_master == true
+  command:
+    cmd: kubeadm init --pod-network-cidr=192.168.0.0/16 --control-plane-endpoint {{ hostvars[groups['bamdad'] | selectattr('mode', 'equalto', 'haproxy') | first]['ansible_host'] }}:6443 --upload-certs --v=5
+  register: kubeadm_init_result
+  changed_when: "'control plane has been initialized' not in kubeadm_init_result.stdout"
+
+
+
+
+
+

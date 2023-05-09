@@ -1,0 +1,41 @@
+---
+
+
+- name: pull haproxy latest image
+  docker_image:
+    name: haproxy:latest
+    source: pull
+
+
+- name: create a directory for haproxy config
+  file:
+    path: /root/haproxy/
+    owner: root
+    group: root
+    mode: "0755"
+    state: directory
+
+
+
+
+- name: craete the haproxy.cfg file from template
+  template:
+    dest: /root/haproxy/haproxy.cfg
+    src: templates/haproxy.cfg.j2
+
+
+
+
+- name: run the haproxy container
+  docker_container:
+    name: haproxy
+    image: haproxy:latest
+    state: present
+    restart_policy: always
+    exposed_ports:
+      - 6443:6443
+    volumes_from:
+      - /root/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+
+
+

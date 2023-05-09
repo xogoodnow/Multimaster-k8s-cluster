@@ -1,0 +1,35 @@
+---
+- name: setting up k8s cluster
+  hosts: all
+  tasks:
+    - name: settign the basis on all nodes
+      include_role:
+        name: "{{ item }}"
+      with_items:
+        - /root/roles/pre_setup
+        - /root/roles/pre_k8s_setup
+        - /root/roles/install_crio
+        - /root/roles/install_kube_adm_ctl_let
+
+    - name: Run role on haproxy hosts
+      include_role:
+        name: /root/roles/haproxy
+      when: "'haproxy' in mode"
+
+    - name: Run role on first host in bamdad hosts group
+      include_role:
+        name: your_first_host_role
+      when: "'bamdad' in group_names and inventory_hostname == groups['bamdad'][0]"
+
+    - name: Run role on other master hosts
+      include_role:
+        name: /root/roles/join_masters
+      when: "'master' in mode and init_master == false"
+
+    - name: Run role on worker hosts
+      include_role:
+        name: your_worker_role
+      when: "'worker' in mode"
+
+
+
