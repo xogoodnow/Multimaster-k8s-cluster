@@ -21,11 +21,10 @@
     - { name: "net.ipv4.ip_forward", value: '1' }
 
 - name: Comment out swap entries in /etc/fstab
-  lineinfile:
-    path: /etc/fstab
+  replace:
+    dest: /etc/fstab
     regexp: '^/.*swap.*$'
-    line: '#{{ item }}'
-  with_lines: grep -E '^/.*swap.*$'
+    replace: '#swap'
   register: swapison
 
 - name: Turn off swap

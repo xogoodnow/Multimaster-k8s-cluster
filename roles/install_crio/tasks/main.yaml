@@ -48,6 +48,7 @@
     - 'cri-o'
     - 'cri-o-runc'
     - 'cri-tools'
+  when: "'haproxy' not in mode"
 
 - name: enable crio
   systemd:
@@ -55,3 +56,4 @@
     name: crio
     state: started
     enabled: yes
+  when: "'haproxy' not in mode"

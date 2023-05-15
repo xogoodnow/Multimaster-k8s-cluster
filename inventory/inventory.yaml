@@ -4,45 +4,53 @@ all:
             hosts:  
                 master-ba-1:
                     ansible_host:
-                    ansible_user:
-                    mode: master
-                    init_master: true
+                    ansible_user: ubuntu
+                    mode: 'master'
+                    init_master: 'true'
                 master-ba-2:
                     ansible_host:
-                    ansible_user:
-                    mode: master
-                    init_master: false
+                    ansible_user: ubuntu
+                    mode: 'master'
+                    init_master: 'false'
                 master-ba-3:
                     ansible_host:
-                    ansible_user:
-                    mode: master
-                    init_master: false
+                    ansible_user: ubuntu
+                    mode: 'master'
+                    init_master: 'false'
 
 
                 worker-ba-4:
                     ansible_host:
-                    ansible_user:
-                    mode: worker
-                    init_master: false
+                    ansible_user: ubuntu
+                    mode: 'worker'
+                    init_master: 'false'
 
 
                 worker-b-5:
                     ansible_host:
-                    ansible_user:
-                    mode: worker
-                    init_master: false
+                    ansible_user: ubuntu
+                    mode: 'worker'
+                    init_master: 'false'
 
                 worker-b-6:
                     ansible_host:
-                    ansible_user:
-                    mode: worker
-                    init_master: false
+                    ansible_user: ubuntu
+                    mode: 'worker'
+                    init_master: 'false'
 
                 worker-ba-7:
                     ansible_host:
-                    ansible_user:
-                    mode: haproxy
-                    init_master: false
+                    ansible_user: ubuntu
+                    mode: 'worker'
+                    init_master: 'false'
+
+
+
+                haproxy:
+                    ansible_host:
+                    ansible_user: ubuntu
+                    mode: 'haproxy'
+                    init_master: 'false'
 
 
 

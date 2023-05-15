@@ -1,13 +1,14 @@
 ---
 - name: Generate a new token
   command: kubeadm token generate
-  delegate_to: groups['bamdad][0]
+  delegate_to: "{{ hostvars[groups['bamdad'][0]]['inventory_hostname'] }}"
   register: token_output
 
 
 - name: Get the join command for worker nodes
   command:
     cmd: kubeadm token create {{ token_output.stdout }} --print-join-command
+  delegate_to: "{{ hostvars[groups['bamdad'][0]]['inventory_hostname'] }}"
   register: worker_join_command_output
 
 
@@ -19,3 +20,4 @@
 
 - name: Join the worker nodes to the Kubernetes cluster
   shell: "{{ worker_join_command }}"
+  when: ("'worker' in mode")
