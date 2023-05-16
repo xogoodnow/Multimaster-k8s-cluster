@@ -3,48 +3,56 @@
   hosts: all
   become: true
   tasks:
-#    - name: settign the basis on all nodes
-#      include_role:
-#        name: "{{ item }}"
-#      with_items:
-#        - /root/ansible/k8s/Multimaster-k8s-cluster-setup/roles/pre_setup
-#        - /root/ansible/k8s/Multimaster-k8s-cluster-setup/roles/pre_k8s_setup
-#        - /root/ansible/k8s/Multimaster-k8s-cluster-setup/roles/install_crio
-#        - /root/ansible/k8s/Multimaster-k8s-cluster-setup/roles/install_kube_adm_ctl_let
+    - name: settign the basis on all nodes
+      include_role:
+        name: "{{ item }}"
+      with_items:
+        - /root/ansible/k8s/Multimaster-k8s-cluster/roles/pre_setup
+        - /root/ansible/k8s/Multimaster-k8s-cluster/roles/pre_k8s_setup
+        - /root/ansible/k8s/Multimaster-k8s-cluster/roles/install_crio
+        - /root/ansible/k8s/Multimaster-k8s-cluster/roles/install_kube_adm_ctl_let
 
-#    - name: Run role on haproxy hosts
-#      include_role:
-#        name: /root/ansible/k8s/Multimaster-k8s-cluster-setup/roles/haproxy
-#      when: "'haproxy' in mode"
+    - name: Run role on haproxy hosts
+      include_role:
+        name: /root/ansible/k8s/Multimaster-k8s-cluster/roles/haproxy
+      when: "'haproxy' in mode"
 
 
-#    - name: get the ip address of haproxy
-#      shell: echo "{{ ansible_host }}"
-#      changed_when: false
-#      when: "'haproxy' in mode"
-#      register: ip
-#
-#
-#    - name: add dummy host
-#      add_host:
-#        name: dummy_haproxy
-#
-#        haproxy_ip: "{{ ip.stdout }}"
-#      when: "'haproxy' in mode"
+    - name: get the ip address of haproxy
+      shell: echo "{{ ansible_host }}"
+      changed_when: false
+      when: "'haproxy' in mode"
+      register: ip
+
+
+    - name: add dummy host
+      add_host:
+        name: dummy_haproxy
+
+        haproxy_ip: "{{ ip.stdout }}"
+      when: "'haproxy' in mode"
 
 
     - name: Run role on first host in bamdad hosts group
       include_role:
-        name: /root/ansible/k8s/Multimaster-k8s-cluster-setup/roles/init_k8s
+        name: /root/ansible/k8s/Multimaster-k8s-cluster/roles/init_k8s
       when: "'true' in init_master"
 
 
+
+
+- name: join workers and masters
+  hosts: all
+  become: true
+  serial: 1
+  tasks:
     - name: Run role on other master hosts
       include_role:
-        name: /root/ansible/k8s/Multimaster-k8s-cluster-setup/roles/join_masters
-      when: "'master' in mode"
+        name: /root/ansible/k8s/Multimaster-k8s-cluster/roles/join_masters
+      when: mode == 'master' and init_master == 'false'
 
     - name: Run role on worker hosts
       include_role:
-        name: /root/ansible/k8s/Multimaster-k8s-cluster-setup/roles/join_workers
+        name: /root/ansible/k8s/Multimaster-k8s-cluster/roles/join_workers
       when: "'worker' in mode"
+
