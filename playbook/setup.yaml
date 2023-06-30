@@ -7,14 +7,20 @@
       include_role:
         name: "{{ item }}"
       with_items:
-        - /root/ansible/k8s/Multimaster-k8s-cluster/roles/pre_setup
-        - /root/ansible/k8s/Multimaster-k8s-cluster/roles/pre_k8s_setup
-        - /root/ansible/k8s/Multimaster-k8s-cluster/roles/install_crio
-        - /root/ansible/k8s/Multimaster-k8s-cluster/roles/install_kube_adm_ctl_let
+        - $PWD/roles/pre_setup
+        - $PWD/roles/pre_k8s_setup
+        - $PWD/roles/install_crio
+    - name: install kubeadm and kubectl
+      include_role:
+        name: "{{ item }}"
+      with_items:
+        - $PWD/roles/install_kube_adm_ctl_let
+      when: "mode != 'haproxy'"
+
 
     - name: Run role on haproxy hosts
       include_role:
-        name: /root/ansible/k8s/Multimaster-k8s-cluster/roles/haproxy
+        name: $PWD/roles/haproxy
       when: "'haproxy' in mode"
 
 
@@ -35,11 +41,8 @@
 
     - name: Run role on first host in bamdad hosts group
       include_role:
-        name: /root/ansible/k8s/Multimaster-k8s-cluster/roles/init_k8s
+        name: $PWD/roles/init_k8s
       when: "'true' in init_master"
-
-
-
 
 - name: join workers and masters
   hosts: all
@@ -48,11 +51,11 @@
   tasks:
     - name: Run role on other master hosts
       include_role:
-        name: /root/ansible/k8s/Multimaster-k8s-cluster/roles/join_masters
+        name: $PWD/roles/join_masters
       when: mode == 'master' and init_master == 'false'
 
     - name: Run role on worker hosts
       include_role:
-        name: /root/ansible/k8s/Multimaster-k8s-cluster/roles/join_workers
+        name: $PWD/roles/join_workers
       when: "'worker' in mode"
 
