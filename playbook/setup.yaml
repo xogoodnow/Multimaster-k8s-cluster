@@ -59,3 +59,9 @@
         name: $PWD/roles/join_workers
       when: "'worker' in mode"
 
+- name: Install CNI
+  tasks:
+    - name: Install Calico
+      include_role:
+        name: $PWD/roles/CNI_Calico
+      when: "'true' in init_master"
