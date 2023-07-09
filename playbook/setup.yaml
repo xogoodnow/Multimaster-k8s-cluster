@@ -58,8 +58,9 @@
       include_role:
         name: $PWD/roles/join_workers
       when: "'worker' in mode"
-
 - name: Install CNI
+  become: true
+  hosts: all
   tasks:
     - name: Install Calico
       include_role:

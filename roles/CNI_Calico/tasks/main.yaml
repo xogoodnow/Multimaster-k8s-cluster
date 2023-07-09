@@ -27,6 +27,52 @@
   failed_when: kubectl_check.rc != 0
 
 - name: Apply the operator
+- name: Create a directory for the manifest
+  file:
+    path: /root/calico_manifests
+    state: directory
+    group: root
+    owner: root
+    mode: 0755
+
+- name: Get the Tigera operator manifest
+  get_url:
+    url: https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/tigera-operator.yaml
+    dest: /root/calico_manifests/tigera-operator.yaml
+  register: get_operator_manifest
+  failed_when: get_operator_manifest is failed
+
+- name: Get the custom resources for calico
+  get_url:
+    url: https://raw.githubusercontent.com/projectcalico/calico/v3.26.1/manifests/custom-resources.yaml
+    dest: /root/calico_manifests/custom-resources.yaml
+  register: get_custom_resources
+  failed_when: get_custom_resources is failed
+
+- name: Check if kubectl is installed
+  shell: which kubectl
+  register: kubectl_check
+  failed_when: kubectl_check.rc != 0
+
+- name: Apply the operator
+  shell:
+    cmd: kubectl apply -f /root/calico_manifests/tigera-operator.yaml
+  register: apply_operator
+  failed_when: apply_operator.rc != 0
+
+- name: Wait for the operator to be ready
+  shell: kubectl -n tigera-operator get tigerastatus/calico
+  register: operator_status
+  until: operator_status.stdout.find("Available") != -1
+  retries: 20
+  delay: 15
+
+- name: Apply the manifest to install Calico
+  shell:
+    cmd: kubectl apply -f  /root/calico_manifests/custom-resources.yaml
+  register: apply_manifest
+  failed_when: apply_manifest.rc != 0
+
   shell:
     cmd: kubectl apply -f /root/calico_manifests/tigera-operator.yaml
   register: apply_operator

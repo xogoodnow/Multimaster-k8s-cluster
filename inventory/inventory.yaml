@@ -19,26 +19,18 @@ all:
                     init_master: 'false'
 
 
-                worker-ba-4:
+
+                worker-ba-1:
                     ansible_host:
                     ansible_user: ubuntu
                     mode: 'worker'
                     init_master: 'false'
-
-
-                worker-b-5:
+                worker-ba-2:
                     ansible_host:
                     ansible_user: ubuntu
                     mode: 'worker'
                     init_master: 'false'
-
-                worker-b-6:
-                    ansible_host:
-                    ansible_user: ubuntu
-                    mode: 'worker'
-                    init_master: 'false'
-
-                worker-ba-7:
+                worker-ba-3:
                     ansible_host:
                     ansible_user: ubuntu
                     mode: 'worker'
